@@ -3,6 +3,7 @@ package com.example.jueguito;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 
 import java.util.Random;
 
@@ -24,8 +25,11 @@ public class Enemigos {
     private int mitadY;
 
     private int frameIndex = 0;
-    private int frameDelay = 10;
+    private int frameDelay = 7;
     private int frameCounter = 0;
+
+    private Rect detectCollision;
+
 
     public Enemigos(Context context, int screenX, int screenY) {
         spriteDerecha = new Bitmap[]{
@@ -48,7 +52,7 @@ public class Enemigos {
                 flipBitmap(spriteDerecha[6])
         };
 
-        // Limites de la pantalla
+
         maxX = screenX;
         maxY = screenY;
         minX = 0;
@@ -58,7 +62,7 @@ public class Enemigos {
         mitadY = screenY / 2;
 
         Random generator = new Random();
-        speed = generator.nextInt(6) + 10;
+        speed = generator.nextInt(2) + 5;
 
         int lado = generator.nextInt(4);
 
@@ -87,39 +91,52 @@ public class Enemigos {
                 spriteActual = spriteIzquierda;
                 break;
         }
+
+        detectCollision = new Rect(x, y, spriteActual[0].getWidth(), spriteActual[0].getHeight());
     }
 
 
     public void update(int jugadorX, int jugadorY, int jugadorWidth, int jugadorHeight) {
-        // Apunta al centro del sprite del jugador
         int targetX = jugadorX + jugadorWidth / 2;
         int targetY = jugadorY + jugadorHeight / 2;
 
-        // Calcula la dirección hacia el centro del jugador
         int deltaX = targetX - x;
         int deltaY = targetY - y;
 
-        // Normaliza el vector de movimiento
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         if (distance > 0) {
             x += (int) ((deltaX / distance) * speed);
             y += (int) ((deltaY / distance) * speed);
+
+            if (deltaX > 0) {
+                spriteActual = spriteIzquierda;
+            } else {
+                spriteActual = spriteDerecha;
+            }
         }
 
-        // Cambia de sprite con retraso
         frameCounter++;
         if (frameCounter >= frameDelay) {
             frameIndex = (frameIndex + 1) % spriteActual.length;
             frameCounter = 0;
         }
+
+        detectCollision.left = x;
+        detectCollision.top = y;
+        detectCollision.right = x + spriteActual[0].getWidth();
+        detectCollision.bottom = y + spriteActual[0].getHeight();
     }
 
     public Bitmap getBitmap() {
-        return spriteActual[0];
+        return spriteActual[frameIndex];
     }
 
     public int getX() {
         return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
     }
 
     public int getY() {
@@ -134,5 +151,9 @@ public class Enemigos {
         android.graphics.Matrix matrix = new android.graphics.Matrix();
         matrix.preScale(-1, 1);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public Rect getDetectCollision() {
+        return detectCollision;
     }
 }

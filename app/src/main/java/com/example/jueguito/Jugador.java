@@ -3,6 +3,7 @@ package com.example.jueguito;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.SystemClock;
 
 public class Jugador {
@@ -15,6 +16,7 @@ public class Jugador {
     private int x, y;
     private float speedX = 1, speedY = 1;
     private int maxX, maxY, minX, minY;
+    private Rect detectCollision;
 
     public Jugador(Context context, int screenX, int screenY) {
         x = screenX / 2;
@@ -42,11 +44,12 @@ public class Jugador {
 
         spriteActual = spriteDerecha;
 
+        detectCollision =  new Rect(x, y, spriteDerecha[0].getWidth(), spriteDerecha[0].getHeight());
 
-        maxX = screenX - spriteDerecha[0].getWidth();
-        maxY = screenY - spriteDerecha[0].getHeight();
-        minX = 0;
-        minY = 0;
+        maxX = screenX + 200 - spriteDerecha[0].getWidth();
+        maxY = screenY + 100 - spriteDerecha[0].getHeight();
+        minX = -200;
+        minY = -200;
 
         lastFrameTime = SystemClock.uptimeMillis();
     }
@@ -82,6 +85,11 @@ public class Jugador {
             frameIndex = (frameIndex + 1) % spriteActual.length;
             lastFrameTime = currentTime;
         }
+
+        detectCollision.left = x;
+        detectCollision.top = y;
+        detectCollision.right = x + spriteDerecha[0].getWidth();
+        detectCollision.bottom = y + spriteDerecha[0].getHeight();
     }
 
 
@@ -103,5 +111,9 @@ public class Jugador {
 
     public int getY() {
         return y;
+    }
+
+    public Rect getDetectCollision() {
+        return detectCollision;
     }
 }

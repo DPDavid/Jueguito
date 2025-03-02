@@ -1,11 +1,15 @@
 package com.example.jueguito;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -25,12 +29,9 @@ public class GameView extends SurfaceView implements Runnable {
 
     private Bitmap background;
 
-    private int screenX;
-    private int screenY;
-
     public GameView(Context context, int screenX, int screenY) {
         super(context);
-        
+
         joystick = new Joystick(300, screenY - 500, 200, 100);
         jugador = new Jugador(context, screenX, screenY);
 
@@ -47,6 +48,7 @@ public class GameView extends SurfaceView implements Runnable {
         background = Bitmap.createScaledBitmap(background, screenX, screenY, false);
     }
 
+
     @Override
     public void run() {
         while (playing) {
@@ -58,8 +60,8 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
         if (joystick.isPressed()) {
-            jugador.setSpeedX(joystick.getDirectionX() * 10);
-            jugador.setSpeedY(joystick.getDirectionY() * 10);
+            jugador.setSpeedX(joystick.getDirectionX() * 14);
+            jugador.setSpeedY(joystick.getDirectionY() * 14);
         } else {
             jugador.setSpeedX(0);
             jugador.setSpeedY(0);
@@ -68,7 +70,15 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (Enemigos enemigo : enemigos) {
             enemigo.update(jugador.getX(), jugador.getY(), jugador.getBitmap().getWidth(), jugador.getBitmap().getHeight());
+
+
+            if (Rect.intersects(jugador.getDetectCollision(), enemigo.getDetectCollision())) {
+                enemigo.setX(-200);
+                break;
+            }
         }
+
+
     }
 
 
