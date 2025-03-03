@@ -157,12 +157,8 @@ public class Jugador {
                 bulletX= detectCollision.centerX()-320;
             }
 
-
-
-            // Crear la bala en la posición calculada y con la dirección actual del jugador
             Bullet nuevaBala = new Bullet(context, bulletX, bulletY, directionX, directionY, spriteActual[0].getWidth(), spriteActual[0].getHeight());
 
-            // Hilo para manejar el retraso de disparo
             new Thread(() -> {
                 try {
                     Thread.sleep(500);

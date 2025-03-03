@@ -14,17 +14,13 @@ public class Bullet {
     private Rect hitbox;
 
     public Bullet(Context context, int startX, int startY, int dirX, int dirY, int playerWidth, int playerHeight) {
-        // Usamos el centro del jugador como punto de inicio
-        this.x = startX + playerWidth / 2 - 25 / 2;  // 25 es el tamaño de la bala
+        this.x = startX + playerWidth / 2 - 25 / 2;
         this.y = startY + playerHeight / 2 - 25 / 2;
         this.directionX = dirX;
         this.directionY = dirY;
         this.isActive = true;
 
-        // Cargar la imagen de la bala
         bullet = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.bala), 25, 25, false);
-
-        // Crear el hitbox de la bala
         hitbox = new Rect(x, y, x + bullet.getWidth(), y + bullet.getHeight());
     }
 
