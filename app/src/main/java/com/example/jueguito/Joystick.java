@@ -34,14 +34,17 @@ public class Joystick {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
+                // Calcular la distancia entre el toque y el centro del joystick
                 float dx = event.getX() - centerX;
                 float dy = event.getY() - centerY;
                 double distance = Math.sqrt(dx * dx + dy * dy);
 
+                // Si el toque está dentro de la base, mover el joystick
                 if (distance < baseRadius) {
                     joystickX = event.getX();
                     joystickY = event.getY();
                 } else {
+                    // Si el toque está fuera de la base, restringir el movimiento del joystick
                     joystickX = (float) (centerX + (dx / distance) * baseRadius);
                     joystickY = (float) (centerY + (dy / distance) * baseRadius);
                 }
@@ -49,12 +52,14 @@ public class Joystick {
                 break;
 
             case MotionEvent.ACTION_UP:
+                // Al soltar el toque, restablecer la posición del joystick al centro
                 joystickX = centerX;
                 joystickY = centerY;
                 isPressed = false;
                 break;
         }
     }
+
 
     public float getDirectionX() {
         return (joystickX - centerX) / baseRadius;

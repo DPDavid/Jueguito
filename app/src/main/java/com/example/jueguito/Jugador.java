@@ -18,10 +18,20 @@ public class Jugador {
     private int maxX, maxY, minX, minY;
     private Rect detectCollision;
 
+    private static final int COLLISION_WIDTH = 60;
+    private static final int COLLISION_HEIGHT = 60;
+
+    private Bullet bullet;
+    private int directionX = 1, directionY = 0;
+
+    private boolean canShoot = true;
+    private Context context;
+
     public Jugador(Context context, int screenX, int screenY) {
+        this.context = context;
+
         x = screenX / 2;
         y = screenY / 2;
-
 
         spriteDerecha = new Bitmap[]{
                 Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.arthurderecha1), 512, 512, false),
@@ -44,7 +54,9 @@ public class Jugador {
 
         spriteActual = spriteDerecha;
 
-        detectCollision =  new Rect(x, y, spriteDerecha[0].getWidth(), spriteDerecha[0].getHeight());
+        int centerX = x + spriteDerecha[0].getWidth() / 2 - COLLISION_WIDTH / 2;
+        int centerY = y + spriteDerecha[0].getHeight() / 2 - COLLISION_HEIGHT / 2;
+        detectCollision = new Rect(centerX, centerY, centerX + COLLISION_WIDTH, centerY + COLLISION_HEIGHT);
 
         maxX = screenX + 200 - spriteDerecha[0].getWidth();
         maxY = screenY + 100 - spriteDerecha[0].getHeight();
@@ -63,20 +75,26 @@ public class Jugador {
         if (y < minY) y = minY;
         if (y > maxY) y = maxY;
 
-
         float threshold = 0.1f;
-
         if (Math.abs(speedX) > Math.abs(speedY)) {
             if (speedX > threshold) {
                 spriteActual = spriteDerecha;
+                directionX = 1;
+                directionY = 0;
             } else if (speedX < -threshold) {
                 spriteActual = spriteIzquierda;
+                directionX = -1;
+                directionY = 0;
             }
         } else {
             if (speedY > threshold) {
                 spriteActual = spriteAbajo;
+                directionX = 0;
+                directionY = 1;
             } else if (speedY < -threshold) {
                 spriteActual = spriteArriba;
+                directionX = 0;
+                directionY = -1;
             }
         }
 
@@ -86,10 +104,9 @@ public class Jugador {
             lastFrameTime = currentTime;
         }
 
-        detectCollision.left = x;
-        detectCollision.top = y;
-        detectCollision.right = x + spriteDerecha[0].getWidth();
-        detectCollision.bottom = y + spriteDerecha[0].getHeight();
+        int centerX = x + spriteDerecha[0].getWidth() / 2 - COLLISION_WIDTH / 2;
+        int centerY = y + spriteDerecha[0].getHeight() / 2 - COLLISION_HEIGHT / 2;
+        detectCollision.set(centerX, centerY, centerX + COLLISION_WIDTH, centerY + COLLISION_HEIGHT);
     }
 
 
@@ -115,5 +132,55 @@ public class Jugador {
 
     public Rect getDetectCollision() {
         return detectCollision;
+    }
+
+    public Bullet shoot() {
+        if (canShoot) {
+            canShoot = false;
+            int bulletX = 0;
+            int bulletY=0;
+
+            if(spriteActual==spriteArriba){
+                bulletY = detectCollision.centerY()-290;
+                bulletX= detectCollision.centerX()-300;
+            }
+            if (spriteActual==spriteAbajo){
+                bulletY= detectCollision.centerY()-240;
+                bulletX= detectCollision.centerX()-210;
+            }
+            if (spriteActual==spriteDerecha){
+                bulletY = detectCollision.centerY()-240;
+                bulletX= detectCollision.centerX()-190;
+            }
+            if (spriteActual==spriteIzquierda){
+                bulletY = detectCollision.centerY()-240;
+                bulletX= detectCollision.centerX()-320;
+            }
+
+
+
+            // Crear la bala en la posición calculada y con la dirección actual del jugador
+            Bullet nuevaBala = new Bullet(context, bulletX, bulletY, directionX, directionY, spriteActual[0].getWidth(), spriteActual[0].getHeight());
+
+            // Hilo para manejar el retraso de disparo
+            new Thread(() -> {
+                try {
+                    Thread.sleep(500);
+                    canShoot = true;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+            return nuevaBala;
+        }
+        return null;
+    }
+
+
+
+
+    public Bullet getBullet() {
+        return bullet;
     }
 }
