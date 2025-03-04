@@ -31,7 +31,6 @@ public class Enemigos {
                 Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.seta6), 128, 128, false),
                 Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.seta7), 128, 128, false)
         };
-
         spriteIzquierda = new Bitmap[]{
                 flipBitmap(spriteDerecha[0]),
                 flipBitmap(spriteDerecha[1]),
@@ -42,18 +41,34 @@ public class Enemigos {
                 flipBitmap(spriteDerecha[6])
         };
 
-        int mitadX = screenX / 2;
-        int mitadY = screenY / 2;
-
         Random generator = new Random();
+
         speed = generator.nextInt(2) + 5;
+
         int lado = generator.nextInt(4);
+        int margin = 50;
 
         switch (lado) {
-            case 0: x = 0; y = mitadY; spriteActual = spriteDerecha; break;
-            case 1: x = screenX; y = mitadY; spriteActual = spriteIzquierda; break;
-            case 2: x = mitadX; y = 0; spriteActual = spriteDerecha; break;
-            case 3: x = mitadX; y = screenY; spriteActual = spriteIzquierda; break;
+            case 0:
+                x = -spriteDerecha[0].getWidth() - margin;
+                y = generator.nextInt(screenY - spriteDerecha[0].getHeight());
+                spriteActual = spriteDerecha;
+                break;
+            case 1:
+                x = screenX + margin;
+                y = generator.nextInt(screenY - spriteDerecha[0].getHeight());
+                spriteActual = spriteIzquierda;
+                break;
+            case 2:
+                x = generator.nextInt(screenX - spriteDerecha[0].getWidth());
+                y = -spriteDerecha[0].getHeight() - margin;
+                spriteActual = spriteDerecha;
+                break;
+            case 3:
+                x = generator.nextInt(screenX - spriteDerecha[0].getWidth());
+                y = screenY + margin;
+                spriteActual = spriteIzquierda;
+                break;
         }
 
         detectCollision = new Rect(x, y, x + spriteDerecha[0].getWidth(), y + spriteDerecha[0].getHeight());
@@ -85,7 +100,6 @@ public class Enemigos {
         }
     }
 
-
     public Bitmap getBitmap() {
         return isActive ? spriteActual[frameIndex] : null;
     }
@@ -116,3 +130,4 @@ public class Enemigos {
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 }
+
