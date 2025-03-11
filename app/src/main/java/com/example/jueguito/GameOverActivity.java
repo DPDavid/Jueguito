@@ -6,7 +6,7 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class GameOverActivity extends AppCompatActivity {
-
+    //Muestra la pantalla de "Game Over" durante 3 segundos y luego regresa al menú principal.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

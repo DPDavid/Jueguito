@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+//Vista principal del juego. Maneja la lógica del jugador, enemigos, colisiones y disparos.
 public class GameView extends SurfaceView implements Runnable {
     private volatile boolean playing;
     private Thread gameThread = null;
@@ -34,12 +35,13 @@ public class GameView extends SurfaceView implements Runnable {
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
-
+        //Inicializa joystick, jugador y balas
         joystick = new Joystick(300, screenY - 500, 200, 100);
         jugador = new Jugador(context, screenX, screenY);
         balas = new ArrayList<>();
         botonDisparar = new BotonDisparar(screenX, screenY);
 
+        //Crea una primera oleada de enemigos
         enemigos = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             enemigos.add(new Enemigos(context, screenX, screenY));
@@ -48,6 +50,7 @@ public class GameView extends SurfaceView implements Runnable {
         surfaceHolder = getHolder();
         paint = new Paint();
 
+        //Carga la imagen de fondo
         background = BitmapFactory.decodeResource(context.getResources(), R.drawable.fondo);
         background = Bitmap.createScaledBitmap(background, screenX, screenY, false);
     }
@@ -61,7 +64,9 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    //Actualiza la posición del jugador, balas y enemigos.
     private void update() {
+        //Movimiento del jugador con el joystick
         if (joystick.isPressed()) {
             jugador.setSpeedX(joystick.getDirectionX() * 14);
             jugador.setSpeedY(joystick.getDirectionY() * 14);
@@ -71,6 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
         jugador.update();
 
+        //Actualización de balas y eliminación de las inactivas
         Iterator<Bullet> bulletIterator = balas.iterator();
         while (bulletIterator.hasNext()) {
             Bullet bala = bulletIterator.next();
@@ -80,6 +86,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
+        //Actualización de enemigos y colisiones
         Iterator<Enemigos> enemyIterator = enemigos.iterator();
         while (enemyIterator.hasNext()) {
             Enemigos enemigo = enemyIterator.next();
@@ -92,6 +99,7 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
 
+            //Verifica colisión con el jugador
             if (Rect.intersects(jugador.getDetectCollision(), enemigo.getDetectCollision())) {
                 playing = false;
                 showGameOverScreen();
@@ -102,12 +110,13 @@ public class GameView extends SurfaceView implements Runnable {
                 enemyIterator.remove();
             }
         }
+        //Si no hay enemigos, genera nuevos
         if (enemigos.isEmpty()) {
             spawnNewEnemies();
         }
     }
 
-
+    //Dibuja los elementos en pantalla: fondo, jugador, enemigos y balas.
     private void draw() {
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
@@ -132,6 +141,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    //Controla la velocidad de actualización del juego.
     private void control() {
         try {
             Thread.sleep(17);
@@ -175,12 +185,14 @@ public class GameView extends SurfaceView implements Runnable {
         return true;
     }
 
+    //Muestra la pantalla de "Game Over".
     private void showGameOverScreen() {
         Intent intent = new Intent(getContext(), GameOverActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         getContext().startActivity(intent);
     }
 
+    //Genera nuevas oleadas de enemigos.
     private void spawnNewEnemies() {
         int enemiesToSpawn = waveCount * 3;
         if (enemigos.size() + enemiesToSpawn > maxEnemies) {

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
+//Clase que representa una bala disparada por el jugador
 public class Bullet {
     private Bitmap bullet;
     private int x, y;
@@ -13,6 +14,7 @@ public class Bullet {
     private boolean isActive = false;
     private Rect hitbox;
 
+    //Constructor de la bala.
     public Bullet(Context context, int startX, int startY, int dirX, int dirY, int playerWidth, int playerHeight) {
         this.x = startX + playerWidth / 2 - 25 / 2;
         this.y = startY + playerHeight / 2 - 25 / 2;
@@ -24,7 +26,7 @@ public class Bullet {
         hitbox = new Rect(x, y, x + bullet.getWidth(), y + bullet.getHeight());
     }
 
-
+    //Dispara la bala desde una posición y dirección específicas
     public void shoot(int startX, int startY, int dirX, int dirY) {
         if (!isActive) {
             x = startX;
@@ -35,6 +37,7 @@ public class Bullet {
         }
     }
 
+    //Actualiza la posición de la bala y verifica si sigue en pantalla
     public void update() {
         if (isActive) {
             x += speed * directionX;
@@ -48,6 +51,7 @@ public class Bullet {
         }
     }
 
+    //Verifica si la bala ha colisionado con un enemigo
     public boolean checkCollision(Rect enemyHitbox) {
         return isActive && Rect.intersects(hitbox, enemyHitbox);
     }

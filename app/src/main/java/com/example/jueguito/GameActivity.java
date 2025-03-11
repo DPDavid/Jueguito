@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Display;
 import androidx.appcompat.app.AppCompatActivity;
 
+//Actividad principal del juego
 public class GameActivity extends AppCompatActivity {
 
     private GameView gameView;
@@ -24,8 +25,10 @@ public class GameActivity extends AppCompatActivity {
 
         setContentView(gameView);
 
+        //Horientazion de la pamtalla
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        //Canción de fondo
         mediaPlayer = MediaPlayer.create(this, R.raw.backgroundsong);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();

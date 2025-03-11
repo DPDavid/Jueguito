@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import java.util.List;
 import java.util.Random;
 
+//Clase que representa a los enemigos en el juego
 public class Enemigos {
     private Bitmap[] spriteDerecha, spriteIzquierda;
     private Bitmap[] spriteActual;
@@ -21,6 +22,7 @@ public class Enemigos {
 
     private Rect detectCollision;
 
+    //Constructor de un enemigo
     public Enemigos(Context context, int screenX, int screenY) {
         spriteDerecha = new Bitmap[]{
                 Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.seta1), 128, 128, false),
@@ -74,6 +76,7 @@ public class Enemigos {
         detectCollision = new Rect(x, y, x + spriteDerecha[0].getWidth(), y + spriteDerecha[0].getHeight());
     }
 
+    //Actualiza la posición del enemigo y verifica colisiones
     public void update(int jugadorX, int jugadorY, int jugadorWidth, int jugadorHeight, List<Bullet> balas) {
         if (!isActive) return;
 
