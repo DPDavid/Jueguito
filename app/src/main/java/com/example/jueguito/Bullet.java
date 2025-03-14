@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class Bullet {
     private Bitmap bullet;
     private int x, y;
-    private int speed = 20;
+    private int speed = 60;
     private int directionX = 0, directionY = 0;
     private boolean isActive = false;
     private Rect hitbox;
